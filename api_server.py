@@ -19,10 +19,10 @@ def parse_arguments():
     parser.add_argument('--som_model_path', type=str, default='weights/icon_detect/model.pt', help='Path to the som model')
     parser.add_argument('--caption_model_name', type=str, default='florence2', help='Name of the caption model')
     parser.add_argument('--caption_model_path', type=str, default='weights/icon_caption_florence', help='Path to the caption model')
-    parser.add_argument('--device', type=str, default='cpu', help='Device to run the model')
+    parser.add_argument('--device', type=str, default='cuda', help='Device to run the model')
     parser.add_argument('--BOX_TRESHOLD', type=float, default=0.05, help='Threshold for box detection')
     parser.add_argument('--host', type=str, default='0.0.0.0', help='Host for the API')
-    parser.add_argument('--port', type=int, default=7861, help='Port for the API')
+    parser.add_argument('--port', type=int, default=8080, help='Port for the API')
     args = parser.parse_args()
     return args
 
@@ -38,7 +38,7 @@ class ParseRequest(BaseModel):
     use_paddleocr: bool = True
     base64_image: str
 
-@app.post("/parse/")
+@app.post("/parse")
 async def parse(parse_request: ParseRequest):
     print('start parsing...')
     start = time.time()
@@ -47,7 +47,7 @@ async def parse(parse_request: ParseRequest):
     print('time:', latency)
     return {"som_image_base64": dino_labled_img, "parsed_content_list": parsed_content_list, 'latency': latency}
 
-@app.get("/probe/")
+@app.get("/probe")
 async def root():
     return {"message": "Omniparser API ready"}
 
